@@ -3,6 +3,8 @@ package fr.labri.gumtree.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.labri.gumtree.io.ParserASTNode;
+
 public class Tree {
 	
 	// Begin constants
@@ -55,6 +57,9 @@ public class Tree {
 	
 	// Needed for Rted :(
 	private Object tmpData;
+	
+	/* Link back to the concrete ASTNode this was created from. */
+	private ParserASTNode<?> astnode;
 	
 	public Tree(int type) {
 		this(type, NO_LABEL);
@@ -470,5 +475,18 @@ public class Tree {
 		StringBuffer b = new StringBuffer();
 		for (Tree t : TreeUtils.preOrder(this)) b.append(indent(t) + t.toString() + "\n");
 		return b.toString();
+	}
+	
+	/*
+	 * Get and set the ASTNode. - qhanam
+	 */
+	
+	public void setASTNode(ParserASTNode<?> node) {
+		this.astnode = node;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> ParserASTNode<T> getASTNode() {
+		return (ParserASTNode<T>) this.astnode;
 	}
 }

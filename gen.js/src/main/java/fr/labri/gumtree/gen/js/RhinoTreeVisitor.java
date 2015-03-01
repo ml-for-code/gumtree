@@ -11,6 +11,7 @@ import org.mozilla.javascript.ast.NodeVisitor;
 import org.mozilla.javascript.ast.NumberLiteral;
 import org.mozilla.javascript.ast.StringLiteral;
 
+import fr.labri.gumtree.io.ParserASTNode;
 import fr.labri.gumtree.tree.Tree;
 
 public class RhinoTreeVisitor implements NodeVisitor {
@@ -56,6 +57,7 @@ public class RhinoTreeVisitor implements NodeVisitor {
 		t.setPos(node.getAbsolutePosition());
 		t.setLength(node.getLength());
 		t.setTypeLabel(Token.typeToName(node.getType()));
+        t.setASTNode(new ParserASTNode<AstNode>(node)); // qhanam
 		trees.put(node, t);
 		return t;
 	}
