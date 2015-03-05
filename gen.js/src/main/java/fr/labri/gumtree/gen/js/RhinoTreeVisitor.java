@@ -52,6 +52,18 @@ public class RhinoTreeVisitor implements NodeVisitor {
 		return tree;
 	}
 	
+	/**
+	 * This provides clients with efficient access to Tree nodes if they have 
+	 * AstNodes. For example, a client may be  working with AstNodes instead
+	 * of the Tree nodes (AstNodes provide more data and functionality). This
+	 * will allow them to get the GumTree data for each AstNode without having
+	 * to perform an inefficient search.
+	 * @return The map of each AstNode to the Tree node that it created.
+	 */
+	public Map<AstNode, Tree> getTreeNodeMap(){
+		return this.trees;
+	}
+	
 	private Tree buildTree(AstNode node)  {
 		Tree t = new Tree(node.getType());
 		t.setPos(node.getAbsolutePosition());

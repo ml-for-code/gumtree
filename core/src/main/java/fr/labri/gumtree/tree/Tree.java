@@ -37,7 +37,7 @@ public class Tree {
 	private int digest;
 	// End metrics
 
-	// Begin position of the tree in terms of absolute character index 
+	// Begin position of the tree in terms of absolute character index
 	private int pos;
 	private int length;
 	// End position

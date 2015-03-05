@@ -20,14 +20,18 @@ package fr.labri.gumtree.gen.js;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
 import org.mozilla.javascript.Parser;
+import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.AstRoot;
 
 import fr.labri.gumtree.io.TreeGenerator;
 import fr.labri.gumtree.tree.Tree;
 
 public class RhinoTreeGenerator extends TreeGenerator {
+	
+	private Map<AstNode, Tree> treeNodeMap;
 
 	public Tree generate(String file) {
 		Parser p = new Parser();
@@ -35,11 +39,24 @@ public class RhinoTreeGenerator extends TreeGenerator {
 			AstRoot root = p.parse(new FileReader(file), file, 1);
 			RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
 			root.visit(visitor);
+			this.treeNodeMap = visitor.getTreeNodeMap();
 			return visitor.getTree();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	/**
+	 * This provides clients with efficient access to Tree nodes if they have 
+	 * AstNodes. For example, a client may be  working with AstNodes instead
+	 * of the Tree nodes (AstNodes provide more data and functionality). This
+	 * will allow them to get the GumTree data for each AstNode without having
+	 * to perform an inefficient search.
+	 * @return The map of each AstNode to the Tree node that it created.
+	 */
+	public Map<AstNode, Tree> getTreeNodeMap() {
+		return this.treeNodeMap;
 	}
 
 	@Override
