@@ -18,6 +18,8 @@
 
 package fr.labri.gumtree.gen.jdt;
 
+import fr.labri.gumtree.tree.Tree;
+
 
 public class JdtTreeGenerator extends AbstractJdtTreeGenerator {
 
@@ -34,6 +36,12 @@ public class JdtTreeGenerator extends AbstractJdtTreeGenerator {
 	@Override
 	protected AbstractJdtVisitor createVisitor() {
 		return new JdtVisitor();
+	}
+
+	@Override
+	public Tree generate(String source, String file) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

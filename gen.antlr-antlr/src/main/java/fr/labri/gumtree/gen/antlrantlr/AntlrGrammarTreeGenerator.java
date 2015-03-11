@@ -8,6 +8,7 @@ import org.antlr.runtime.tree.CommonTree;
 import fr.labri.gumtree.gen.antlr.AbstractAntlrTreeGenerator;
 import fr.labri.gumtree.gen.antlrantlr.ANTLRv3Lexer;
 import fr.labri.gumtree.gen.antlrantlr.ANTLRv3Parser;
+import fr.labri.gumtree.tree.Tree;
 
 public class AntlrGrammarTreeGenerator extends AbstractAntlrTreeGenerator {
 
@@ -36,6 +37,12 @@ public class AntlrGrammarTreeGenerator extends AbstractAntlrTreeGenerator {
 	@Override
 	public String getName() {
 		return "antlr-antlr";
+	}
+
+	@Override
+	public Tree generate(String source, String file) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

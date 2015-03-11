@@ -33,6 +33,15 @@ public class RhinoTreeGenerator extends TreeGenerator {
 	
 	private Map<AstNode, Tree> treeNodeMap;
 
+	public Tree generate(String source, String file) {
+		Parser p = new Parser();
+        AstRoot root = p.parse(source, file, 1);
+        RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
+        root.visit(visitor);
+        this.treeNodeMap = visitor.getTreeNodeMap();
+        return visitor.getTree();
+	}
+
 	public Tree generate(String file) {
 		Parser p = new Parser();
 		try {

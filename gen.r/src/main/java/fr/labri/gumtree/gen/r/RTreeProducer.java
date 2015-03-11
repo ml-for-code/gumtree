@@ -11,6 +11,7 @@ import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.runtime.tree.CommonTree;
 
 import fr.labri.gumtree.gen.antlr.AbstractAntlrTreeGenerator;
+import fr.labri.gumtree.tree.Tree;
 
 public class RTreeProducer extends AbstractAntlrTreeGenerator {
 
@@ -39,6 +40,12 @@ public class RTreeProducer extends AbstractAntlrTreeGenerator {
 	@Override
 	public String getName() {
 		return "r-antlr";
+	}
+
+	@Override
+	public Tree generate(String source, String file) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

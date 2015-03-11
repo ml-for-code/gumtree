@@ -78,4 +78,10 @@ public class RubyTreeGenerator extends TreeGenerator {
 	public String getName() {
 		return "ruby-jruby";
 	}
+
+	@Override
+	public Tree generate(String source, String file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

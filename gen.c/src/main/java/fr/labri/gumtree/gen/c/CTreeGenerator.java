@@ -45,4 +45,10 @@ public class CTreeGenerator extends TreeGenerator {
 	public String getName() {
 		return "c-cocci";
 	}
+
+	@Override
+	public Tree generate(String source, String file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
