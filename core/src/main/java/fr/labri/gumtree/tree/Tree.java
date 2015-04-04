@@ -1,9 +1,11 @@
 package fr.labri.gumtree.tree;
 
+import java.io.InvalidClassException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.labri.gumtree.io.ParserASTNode;
+import ca.ubc.ece.salt.gumtree.ast.ClassifiedASTNode;
+import ca.ubc.ece.salt.gumtree.ast.ParserASTNode;
 
 public class Tree {
 	
@@ -485,8 +487,15 @@ public class Tree {
 		this.astnode = node;
 	}
 	
+	public ClassifiedASTNode getClassifiedASTNode() throws InvalidClassException {
+		if(this.astnode.getASTNode() instanceof ClassifiedASTNode) {
+			return (ClassifiedASTNode) this.astnode.getASTNode();
+		}
+		throw new InvalidClassException("The AST node does not implement ASTClassifier.");
+	}
+	
 	@SuppressWarnings("unchecked")
-	public <T> ParserASTNode<T> getASTNode() {
-		return (ParserASTNode<T>) this.astnode;
+	public <T> T getASTNode() {
+		return ((ParserASTNode<T>) this.astnode).getASTNode();
 	}
 }

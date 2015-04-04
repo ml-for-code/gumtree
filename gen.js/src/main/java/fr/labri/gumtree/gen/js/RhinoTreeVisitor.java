@@ -11,7 +11,7 @@ import org.mozilla.javascript.ast.NodeVisitor;
 import org.mozilla.javascript.ast.NumberLiteral;
 import org.mozilla.javascript.ast.StringLiteral;
 
-import fr.labri.gumtree.io.ParserASTNode;
+import ca.ubc.ece.salt.gumtree.ast.ParserASTNode;
 import fr.labri.gumtree.tree.Tree;
 
 public class RhinoTreeVisitor implements NodeVisitor {

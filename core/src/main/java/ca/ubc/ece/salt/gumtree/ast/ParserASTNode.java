@@ -1,4 +1,4 @@
-package fr.labri.gumtree.io;
+package ca.ubc.ece.salt.gumtree.ast;
 
 /**
  * Provides a class to link Tree nodes back to the original ASTNode objects
