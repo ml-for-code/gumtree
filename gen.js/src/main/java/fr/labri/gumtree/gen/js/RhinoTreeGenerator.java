@@ -26,6 +26,7 @@ import org.mozilla.javascript.Parser;
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.AstRoot;
 
+import ca.ubc.ece.salt.sdjsb.ast.ConditionalPreProcessor;
 import fr.labri.gumtree.io.TreeGenerator;
 import fr.labri.gumtree.tree.Tree;
 
@@ -36,6 +37,13 @@ public class RhinoTreeGenerator extends TreeGenerator {
 	public Tree generate(String source, String file) {
 		Parser p = new Parser();
         AstRoot root = p.parse(source, file, 1);
+        
+        /* Expand the ternary operators. */
+        ConditionalPreProcessor preProcessor = new ConditionalPreProcessor();
+        preProcessor.process(root);
+        System.out.print(root.toSource());
+
+        /* Build the GumTree tree. */
         RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
         root.visit(visitor);
         this.treeNodeMap = visitor.getTreeNodeMap();
@@ -46,6 +54,12 @@ public class RhinoTreeGenerator extends TreeGenerator {
 		Parser p = new Parser();
 		try {
 			AstRoot root = p.parse(new FileReader(file), file, 1);
+
+            /* Expand the ternary operators. */
+            ConditionalPreProcessor preProcessor = new ConditionalPreProcessor();
+            preProcessor.process(root);
+
+            /* Build the GumTree tree. */
 			RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
 			root.visit(visitor);
 			this.treeNodeMap = visitor.getTreeNodeMap();

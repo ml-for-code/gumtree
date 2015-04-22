@@ -31,6 +31,8 @@ public class RhinoTreeVisitor implements NodeVisitor {
 		else {
 			Tree t = buildTree(node);
 			Tree p = trees.get(node.getParent());
+			if(p == null) 
+				System.out.println(node.toSource());
 			p.addChild(t);
 			
 			if (node instanceof Name) {

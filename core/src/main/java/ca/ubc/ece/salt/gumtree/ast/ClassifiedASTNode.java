@@ -34,7 +34,7 @@ public interface ClassifiedASTNode {
     /**
      * @return The change applied to this node from AST differencing.
      */
-    public ChangeType getChangeType();
+    ChangeType getChangeType();
     
     /**
      * @param node The source or destination node to map this node to.
@@ -47,6 +47,21 @@ public interface ClassifiedASTNode {
      * 		   inserted and removed nodes).
      */
     ClassifiedASTNode getMapping();
+    
+    /**
+     * @return true if the AST node is an empty statement.
+     */
+    boolean isEmpty();
+    
+    /**
+     * @return the type of AST node as a string.
+     */
+    String getTypeName();
+    
+    /**
+     * @return the CFG node or edge label (the source code).
+     */
+    String getCFGLabel();
 
     /** The change type from AST differencing. **/
     public enum ChangeType {
@@ -54,7 +69,8 @@ public interface ClassifiedASTNode {
     	REMOVED,
     	UPDATED,
     	MOVED,
-    	UNCHANGED
+    	UNCHANGED,
+    	UNKNOWN
     }
 
 }

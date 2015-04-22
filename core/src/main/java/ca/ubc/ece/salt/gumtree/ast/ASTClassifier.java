@@ -25,13 +25,25 @@ public class ASTClassifier {
 		
 	}
 
+	/**
+	 * Maps Tree node classifications to AST node classifications.
+	 * @throws InvalidClassException
+	 */
 	public void classifyASTNodes() throws InvalidClassException {
 		
 		/* Classify the AST nodes from the Tree nodes. */
+
 		this.classifyAs(this.treeClassifier.getSrcDelTrees(), ChangeType.REMOVED);
+		this.classifyAs(this.treeClassifier.getSrcMvTrees(), ChangeType.MOVED);
+		this.classifyAs(this.treeClassifier.getSrcUpdTrees(), ChangeType.UPDATED);
+		
+		this.classifyAs(this.treeClassifier.getDstMvTrees(), ChangeType.MOVED);
+		this.classifyAs(this.treeClassifier.getDstUpdTrees(), ChangeType.UPDATED);
+		this.classifyAs(this.treeClassifier.getDstAddTrees(), ChangeType.INSERTED);
 		
 		/* Classify the children of the classified  AST nodes and assign
 		 * node mappings for MOVED and UPDATED nodes. */
+
 		this.classifyASTNode(this.srcTree, ChangeType.UNCHANGED, true);
 		this.classifyASTNode(this.dstTree, ChangeType.UNCHANGED, false);
 		
@@ -43,7 +55,7 @@ public class ASTClassifier {
 		 * corresponding AST node with the Tree node's class. */
 		for(Tree tree : classifiedTreeNodes) {
 			ClassifiedASTNode astNode = tree.getClassifiedASTNode(); 
-            astNode.setChangeType(ClassifiedASTNode.ChangeType.REMOVED);
+            astNode.setChangeType(changeType);
 		}
 		
 	}
@@ -65,12 +77,14 @@ public class ASTClassifier {
 
 		if(nodeChangeType == ChangeType.UNCHANGED) {
 			classifiedNode.setChangeType(changeType);
+		}
+		else {
 			changeType = nodeChangeType;
 		}
 		
 		/* Assign the node mapping if this is an UPDATED or MOVED node. */
 		
-		if(changeType == ChangeType.MOVED || changeType == ChangeType.UPDATED) {
+		if(changeType == ChangeType.MOVED || changeType == ChangeType.UPDATED || changeType == ChangeType.UNCHANGED) {
 			if(isSrc) {
 				Tree dst = this.mappings.getDst(node);
 				if(dst != null) classifiedNode.map(dst.getClassifiedASTNode());
