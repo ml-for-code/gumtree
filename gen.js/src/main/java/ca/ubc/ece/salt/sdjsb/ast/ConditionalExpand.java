@@ -7,6 +7,7 @@ import org.mozilla.javascript.ast.ConditionalExpression;
 import org.mozilla.javascript.ast.ExpressionStatement;
 import org.mozilla.javascript.ast.ForInLoop;
 import org.mozilla.javascript.ast.ForLoop;
+import org.mozilla.javascript.ast.FunctionNode;
 import org.mozilla.javascript.ast.IfStatement;
 import org.mozilla.javascript.ast.InfixExpression;
 import org.mozilla.javascript.ast.NodeVisitor;
@@ -314,6 +315,13 @@ class ConditionalExpand implements NodeVisitor {
 				
 			}
 			
+		}
+		
+		else if(node instanceof FunctionNode) {
+			
+			/* Don't get into the function body. */
+			return false;
+
 		}
 		
 		if(this.expanded) return false; 

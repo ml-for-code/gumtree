@@ -13,5 +13,5 @@ import org.mozilla.javascript.ast.AstRoot;
 public interface PreProcessor {
 	
 	void process(AstRoot root);
-
+	
 }

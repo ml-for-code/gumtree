@@ -41,7 +41,6 @@ public class RhinoTreeGenerator extends TreeGenerator {
         /* Expand the ternary operators. */
         ConditionalPreProcessor preProcessor = new ConditionalPreProcessor();
         preProcessor.process(root);
-        System.out.print(root.toSource());
 
         /* Build the GumTree tree. */
         RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
@@ -58,6 +57,7 @@ public class RhinoTreeGenerator extends TreeGenerator {
             /* Expand the ternary operators. */
             ConditionalPreProcessor preProcessor = new ConditionalPreProcessor();
             preProcessor.process(root);
+            System.out.println(root.toSource());
 
             /* Build the GumTree tree. */
 			RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);

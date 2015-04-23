@@ -26,8 +26,18 @@ public abstract class StatementPreProcessor implements PreProcessor {
 	@Override
 	public void process(AstRoot root) {
 		
-		/* Call the processStatement method on all statements. */
+		/* Process the statements in the script. */
 		this.processStatementsSwitch(root);
+
+		/* Get the list of functions in the script. */
+		List<FunctionNode> functions = FunctionTreeVisitor.getFunctions(root);
+		
+		/* Process the statements in the function. */
+		for(FunctionNode function : functions) {
+			if(function.getBody() instanceof Block) {
+                this.processStatementsSwitch(function.getBody());
+			}
+		}
 		
 	}
 	
@@ -119,21 +129,6 @@ public abstract class StatementPreProcessor implements PreProcessor {
 		/* Process the sub-statements. */
 		for(Node child : node) {
 			this.processStatementsSwitch((AstNode)child);
-		}
-
-	}
-
-	/**
-	 * Calls the abstract process method on each child statement.
-	 * @param node The node with child statements.
-	 */
-	private void processStatements(FunctionNode node) {
-
-		if(node.getBody() instanceof Block)
-            this.processStatementsSwitch(node.getBody());
-		else {
-			AstNode newStatement = this.processStatement(node.getBody());
-			if(newStatement != null) node.setBody(newStatement);
 		}
 
 	}
@@ -238,6 +233,8 @@ public abstract class StatementPreProcessor implements PreProcessor {
 	 */
 	private void processStatements(SwitchCase node) {
 		
+		if(node.getStatements() == null) return;
+		
 		List<Pair<Integer, AstNode>> newStatements = new LinkedList<Pair<Integer, AstNode>>();
 		
 		for(AstNode statement : node.getStatements()) {
@@ -313,8 +310,6 @@ public abstract class StatementPreProcessor implements PreProcessor {
 			this.processStatements((AstRoot)node);
 		} else if (node instanceof Block) {
 			this.processStatements((Block)node);
-		} else if (node instanceof FunctionNode) {
-			this.processStatements((FunctionNode) node);
 		} else if (node instanceof IfStatement) {
 			this.processStatements((IfStatement) node);
 		} else if (node instanceof WhileLoop) {
