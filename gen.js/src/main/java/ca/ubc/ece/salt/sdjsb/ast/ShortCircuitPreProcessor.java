@@ -10,7 +10,7 @@ import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.IfStatement;
 import org.mozilla.javascript.ast.Scope;
 
-public class ConditionalPreProcessor extends StatementPreProcessor {
+public class ShortCircuitPreProcessor extends StatementPreProcessor {
 	
 	@Override
 	protected AstNode processStatement(AstNode node) {
@@ -26,8 +26,8 @@ public class ConditionalPreProcessor extends StatementPreProcessor {
 	}
 	
 	/** 
-	 * Create the if/else statements for the conditional. 
-	 * returns null if there are no conditional expressions in the statement.
+	 * Create the if/else statements for the short circuit. 
+	 * returns null if there are no short circuit expressions in the statement.
 	 */
 	private IfStatement createIfStatements(AstNode node) throws CloneNotSupportedException{
 		
@@ -109,8 +109,8 @@ public class ConditionalPreProcessor extends StatementPreProcessor {
 			if(condition != null) falseCondition = condition.clone(condition.getParent());
 			
 			/* Expand the first conditional. */
-			Pair<AstNode, AstNode> trueResult = ConditionalExpand.expand(trueClone, trueCondition, true);
-			Pair<AstNode, AstNode> falseResult = ConditionalExpand.expand(falseClone, falseCondition, false);
+			Pair<AstNode, AstNode> trueResult = ShortCircuitExpand.expand(trueClone, trueCondition, true);
+			Pair<AstNode, AstNode> falseResult = ShortCircuitExpand.expand(falseClone, falseCondition, false);
 			
 			/* If the statements were expanded, add them to the toExpand set to
 			 * be expanded again. Otherwise add them to the completed list. */

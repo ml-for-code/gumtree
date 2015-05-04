@@ -80,7 +80,7 @@ class ConditionalExpand implements NodeVisitor {
 	}
 	
 	private void setCondition(AstNode testExpression) {
-
+		
         /* Make the condition false if this is a false path. */
         if(!this.isTrueBranch) {
         	UnaryExpression not = new UnaryExpression(Token.NOT, 0, testExpression);
@@ -93,8 +93,16 @@ class ConditionalExpand implements NodeVisitor {
             this.condition = testExpression;
         }
         else {
-            this.condition = new InfixExpression(Token.AND, this.condition, testExpression, 0);
+        	InfixExpression ie = new InfixExpression(Token.AND, this.condition, testExpression, 0);
+        	this.condition.setParent(ie);
+        	testExpression.setParent(ie);
+
+            this.condition = ie;
         }
+
+		//System.out.println(this.condition.toSource());
+        //if(testExpression == null) System.out.println("Parent is null!");
+        
 		
 	}
 	

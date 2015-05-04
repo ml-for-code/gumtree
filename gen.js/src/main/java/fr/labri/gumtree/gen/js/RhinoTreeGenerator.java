@@ -27,6 +27,7 @@ import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.AstRoot;
 
 import ca.ubc.ece.salt.sdjsb.ast.ConditionalPreProcessor;
+import ca.ubc.ece.salt.sdjsb.ast.ShortCircuitPreProcessor;
 import fr.labri.gumtree.io.TreeGenerator;
 import fr.labri.gumtree.tree.Tree;
 
@@ -39,8 +40,14 @@ public class RhinoTreeGenerator extends TreeGenerator {
         AstRoot root = p.parse(source, file, 1);
         
         /* Expand the ternary operators. */
-        ConditionalPreProcessor preProcessor = new ConditionalPreProcessor();
-        preProcessor.process(root);
+        ConditionalPreProcessor conditionalPreProcessor = new ConditionalPreProcessor();
+        conditionalPreProcessor.process(root);
+
+        /* Expand short circuit operators. */
+        ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
+        shortCircuitPreProcessor.process(root);
+
+        //System.out.println(root.toSource());
 
         /* Build the GumTree tree. */
         RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
@@ -55,9 +62,14 @@ public class RhinoTreeGenerator extends TreeGenerator {
 			AstRoot root = p.parse(new FileReader(file), file, 1);
 
             /* Expand the ternary operators. */
-            ConditionalPreProcessor preProcessor = new ConditionalPreProcessor();
-            preProcessor.process(root);
-            System.out.println(root.toSource());
+            ConditionalPreProcessor conditionalPreProcessor = new ConditionalPreProcessor();
+            conditionalPreProcessor.process(root);
+
+            /* Expand short circuit operators. */
+            ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
+            shortCircuitPreProcessor.process(root);
+
+            //System.out.println(root.toSource());
 
             /* Build the GumTree tree. */
 			RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
