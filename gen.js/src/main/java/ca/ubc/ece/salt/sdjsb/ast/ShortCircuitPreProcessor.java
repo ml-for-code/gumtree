@@ -74,7 +74,7 @@ public class ShortCircuitPreProcessor extends StatementPreProcessor {
 			}
 			
 		}
-		
+
 		return ifStatement;
 		
 	}
@@ -115,6 +115,8 @@ public class ShortCircuitPreProcessor extends StatementPreProcessor {
 			/* If the statements were expanded, add them to the toExpand set to
 			 * be expanded again. Otherwise add them to the completed list. */
 			if(trueResult != null && falseResult != null) {
+//				System.out.println("True expand: " + trueResult.getLeft().toSource());
+//				System.out.println("False expand: " + falseResult.getLeft().toSource());
 				toExpand.add(trueResult);
 				toExpand.add(falseResult);
 			}

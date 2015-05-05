@@ -7,6 +7,7 @@ import org.mozilla.javascript.ast.ExpressionStatement;
 import org.mozilla.javascript.ast.FunctionNode;
 import org.mozilla.javascript.ast.InfixExpression;
 import org.mozilla.javascript.ast.NodeVisitor;
+import org.mozilla.javascript.ast.ObjectLiteral;
 import org.mozilla.javascript.ast.ParenthesizedExpression;
 import org.mozilla.javascript.ast.ReturnStatement;
 import org.mozilla.javascript.ast.ThrowStatement;
@@ -83,7 +84,6 @@ class ShortCircuitExpand implements NodeVisitor {
 
 		//System.out.println(this.condition.toSource());
         //if(testExpression == null) System.out.println("Parent is null!");
-        
 		
 	}
 	
@@ -91,6 +91,14 @@ class ShortCircuitExpand implements NodeVisitor {
 	public boolean visit(AstNode node) {
 
 		if(this.expanded) return false; 
+
+        /* TODO: Object assignments are too bulky. We need to expand them like
+         * we expand variable initializers from variable declarations. For now
+         * we set a hard limit of five elements in the object. */ 
+        if(node instanceof ObjectLiteral) {
+        	ObjectLiteral ol = (ObjectLiteral)node;
+        	if(ol.getElements().size() > 5) return false;
+        }
 
 		/* We need to handle each node type on a case-by-case basis. */
 		if(node instanceof InfixExpression) {
@@ -121,20 +129,19 @@ class ShortCircuitExpand implements NodeVisitor {
 			}
 			else if(ie.getRight() instanceof InfixExpression) {
 
-				InfixExpression shortCircuit = (InfixExpression) ie.getLeft();
+				InfixExpression shortCircuit = (InfixExpression) ie.getRight();
 				int operator = shortCircuit.getOperator();
 				
 				if(operator == Token.AND || operator == Token.OR) {
 
                     /* Expand the statement by pulling up. */
-                    InfixExpression and = (InfixExpression) ie.getLeft();
                     if((this.isTrueBranch && operator == Token.AND) || 
-                       (!this.isTrueBranch && operator == Token.OR)) ie.setLeft(shortCircuit.getRight());
-                    else ie.setRight(and.getLeft());
+                       (!this.isTrueBranch && operator == Token.OR)) ie.setRight(shortCircuit.getRight());
+                    else ie.setRight(shortCircuit.getLeft());
                     ie.getRight().setParent(ie);
                     
                     /* Add the test condition. */
-                    this.setCondition(and.getLeft().clone(and.getLeft().getParent()));
+                    this.setCondition(shortCircuit.getLeft().clone(shortCircuit.getLeft().getParent()));
 
                     /* We have expanded the statement. */
                     this.expanded = true;
@@ -156,15 +163,14 @@ class ShortCircuitExpand implements NodeVisitor {
 				
 				if(operator == Token.AND || operator == Token.OR) {
 
-                    /* Expand the statement by pulling up. */
-                    InfixExpression and = (InfixExpression) ie.getInitializer();
+                    /* ExpshortCircuit the statement by pulling up. */
                     if((this.isTrueBranch && operator == Token.AND) || 
                        (!this.isTrueBranch && operator == Token.OR)) ie.setInitializer(shortCircuit.getRight());
-                    else ie.setInitializer(and.getLeft());
+                    else ie.setInitializer(shortCircuit.getLeft());
                     ie.getInitializer().setParent(ie);
                     
                     /* Add the test condition. */
-                    this.setCondition(and.getLeft().clone(and.getLeft().getParent()));
+                    this.setCondition(shortCircuit.getLeft().clone(shortCircuit.getLeft().getParent()));
                     
                     /* We have expanded the statement. */
                     this.expanded = true;
@@ -186,15 +192,14 @@ class ShortCircuitExpand implements NodeVisitor {
 				
 				if(operator == Token.AND || operator == Token.OR) {
 
-                    /* Expand the statement by pulling up. */
-                    InfixExpression and = (InfixExpression) pe.getExpression();
+                    /* ExpshortCircuit the statement by pulling up. */
                     if((this.isTrueBranch && operator == Token.AND) || 
                        (!this.isTrueBranch && operator == Token.OR)) pe.setExpression(shortCircuit.getRight());
-                    else pe.setExpression(and.getLeft());
+                    else pe.setExpression(shortCircuit.getLeft());
                     pe.getExpression().setParent(pe);
                     
                     /* Add the test condition. */
-                    this.setCondition(and.getLeft().clone(and.getLeft().getParent()));
+                    this.setCondition(shortCircuit.getLeft().clone(shortCircuit.getLeft().getParent()));
                     
                     /* We have expanded the statement. */
                     this.expanded = true;
@@ -216,15 +221,14 @@ class ShortCircuitExpand implements NodeVisitor {
 				
 				if(operator == Token.AND || operator == Token.OR) {
 
-                    /* Expand the statement by pulling up. */
-                    InfixExpression and = (InfixExpression) es.getExpression();
+                    /* ExpshortCircuit the statement by pulling up. */
                     if((this.isTrueBranch && operator == Token.AND) || 
                        (!this.isTrueBranch && operator == Token.OR)) es.setExpression(shortCircuit.getRight());
-                    else es.setExpression(and.getLeft());
+                    else es.setExpression(shortCircuit.getLeft());
                     es.getExpression().setParent(es);
                     
                     /* Add the test condition. */
-                    this.setCondition(and.getLeft().clone(and.getLeft().getParent()));
+                    this.setCondition(shortCircuit.getLeft().clone(shortCircuit.getLeft().getParent()));
                     
                     /* We have expanded the statement. */
                     this.expanded = true;
@@ -246,15 +250,14 @@ class ShortCircuitExpand implements NodeVisitor {
 				
 				if(operator == Token.AND || operator == Token.OR) {
 
-                    /* Expand the statement by pulling up. */
-                    InfixExpression and = (InfixExpression) is.getReturnValue();
+                    /* ExpshortCircuit the statement by pulling up. */
                     if((this.isTrueBranch && operator == Token.AND) || 
                        (!this.isTrueBranch && operator == Token.OR)) is.setReturnValue(shortCircuit.getRight());
-                    else is.setReturnValue(and.getLeft());
+                    else is.setReturnValue(shortCircuit.getLeft());
                     is.getReturnValue().setParent(is);
                     
                     /* Add the test condition. */
-                    this.setCondition(and.getLeft().clone(and.getLeft().getParent()));
+                    this.setCondition(shortCircuit.getLeft().clone(shortCircuit.getLeft().getParent()));
                     
                     /* We have expanded the statement. */
                     this.expanded = true;
@@ -277,14 +280,13 @@ class ShortCircuitExpand implements NodeVisitor {
 				if(operator == Token.AND || operator == Token.OR) {
 
                     /* Expand the statement by pulling up. */
-                    InfixExpression and = (InfixExpression) is.getExpression();
                     if((this.isTrueBranch && operator == Token.AND) || 
                        (!this.isTrueBranch && operator == Token.OR)) is.setExpression(shortCircuit.getRight());
-                    else is.setExpression(and.getLeft());
+                    else is.setExpression(shortCircuit.getLeft());
                     is.getExpression().setParent(is);
                     
                     /* Add the test condition. */
-                    this.setCondition(and.getLeft().clone(and.getLeft().getParent()));
+                    this.setCondition(shortCircuit.getLeft().clone(shortCircuit.getLeft().getParent()));
                     
                     /* We have expanded the statement. */
                     this.expanded = true;
