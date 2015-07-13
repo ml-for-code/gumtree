@@ -63,7 +63,9 @@ public class ASTClassifier {
 	/**
 	 * Recursively classifies the Tree node's AST nodes with the change type
 	 * of their parent. The classification only occurs if the current node's
-	 * class is {@code UNCHANGED}.
+	 * class is {@code UNCHANGED}. If a node is updated, inserted or removed,
+	 * we also label that node's {@code UNCHANGED} ancestors as {@code UPDATED}
+	 * up to the statement level.
 	 * @param node The node to classify.
 	 * @param changeType The change type to assign the AST node.
 	 * @throws InvalidClassException 
@@ -79,7 +81,12 @@ public class ASTClassifier {
 			classifiedNode.setChangeType(changeType);
 		}
 		else {
+			/* The node has been changed. */
 			changeType = nodeChangeType;
+			
+			/* Since this is a new change type (updated, inserted or removed), 
+			 * label the ancestors as 'updated' up to the statement level. */
+			labelAncestorsUpdated(node);
 		}
 		
 		/* Assign the node mapping if this is an UPDATED or MOVED node. */
@@ -99,6 +106,35 @@ public class ASTClassifier {
 		
 		for(Tree child : node.getChildren()) {
 			classifyASTNode(child, changeType, isSrc);
+		}
+		
+	}
+	
+	/**
+	 * Visits all the ancestors of the node and labels them as {@code UPDATED}
+	 * if they have the label {@code UNCHANGED}.
+	 * @param node The updated/inserted/removed node who's ancestors should be
+	 * 			   labeled.
+	 */
+	private static void labelAncestorsUpdated(Tree node) throws InvalidClassException {
+		
+		/* If this is a statement, there is no ancestor to label. */
+		if(node.getClassifiedASTNode().isStatement()) return;
+		
+		/* Climb the tree and label all unchanged nodes until we get to the
+		 * statement. */
+		Tree ancestor = node.getParent();
+		while(ancestor.getClassifiedASTNode().getChangeType() == ChangeType.UNCHANGED) {
+			
+			/* Label the node as updated, since one of its descendants was
+			 * inserted, removed or updated. */
+			node.getClassifiedASTNode().setChangeType(ChangeType.UPDATED);
+			
+			/* If we've reached the statement level, stop. */
+			if((ancestor.getClassifiedASTNode().isStatement())) { 
+				break;
+			}
+			
 		}
 		
 	}

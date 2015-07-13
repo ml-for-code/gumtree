@@ -62,6 +62,11 @@ public interface ClassifiedASTNode {
      * @return the CFG node or edge label (the source code).
      */
     String getCFGLabel();
+    
+    /**
+     * Returns true if this node represents a statement.
+     */
+    boolean isStatement();
 
     /** The change type from AST differencing. **/
     public enum ChangeType {

@@ -78,7 +78,7 @@ public class RhinoTreeGenerator extends TreeGenerator {
 //            ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
 //            shortCircuitPreProcessor.process(root);
 
-//            System.out.println(root.toSource());
+            System.out.println(root.toSource());
 
             /* Build the GumTree tree. */
 			RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
