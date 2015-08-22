@@ -21,7 +21,7 @@ public class RTreeProducer extends AbstractAntlrTreeGenerator {
 		RLexer rl = new RLexer(stream);
 		tokens = new TokenRewriteStream(rl);
 		RParser rp = new RParser(tokens);
-		return (CommonTree) rp.script().getTree();
+		return rp.script().getTree();
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class RTreeProducer extends AbstractAntlrTreeGenerator {
 		CommonTokenStream tokens = new TokenRewriteStream(l);
 		return new RParser(tokens);
 	}
-	
+
 	@Override
 	public boolean handleFile(String file) {
 		return file.toLowerCase().endsWith(".r");
@@ -43,7 +43,7 @@ public class RTreeProducer extends AbstractAntlrTreeGenerator {
 	}
 
 	@Override
-	public Tree generate(String source, String file) {
+	public Tree generate(String source, String file, boolean preProcess) {
 		// TODO Auto-generated method stub
 		return null;
 	}

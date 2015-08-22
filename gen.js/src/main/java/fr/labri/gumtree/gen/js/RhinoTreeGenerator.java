@@ -1,17 +1,17 @@
 /*
  * Copyright 2011 Jean-Rémy Falleri
- * 
+ *
  * This file is part of Praxis.
  * Praxis is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
- * Praxis is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *
+ * Praxis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Praxis.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,26 +33,29 @@ import fr.labri.gumtree.io.TreeGenerator;
 import fr.labri.gumtree.tree.Tree;
 
 public class RhinoTreeGenerator extends TreeGenerator {
-	
+
 	private Map<AstNode, Tree> treeNodeMap;
 
-	public Tree generate(String source, String file) {
+	@Override
+	public Tree generate(String source, String file, boolean preProcess) {
 		Parser p = new Parser();
         AstRoot root = p.parse(source, file, 1);
 
-        /* Expand variable initializers. */
-//        VarPreProcessor varPreProcessor = new VarPreProcessor();
-//        varPreProcessor.process(root);
-        
-        /* Expand the ternary operators. */
-//        ConditionalPreProcessor conditionalPreProcessor = new ConditionalPreProcessor();
-//        conditionalPreProcessor.process(root);
+        if(preProcess) {
+			/* Expand variable initializers. */
+			VarPreProcessor varPreProcessor = new VarPreProcessor();
+			varPreProcessor.process(root);
 
-        /* Expand short circuit operators. */
-//        ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
-//        shortCircuitPreProcessor.process(root);
+			/* Expand the ternary operators. */
+			ConditionalPreProcessor conditionalPreProcessor = new ConditionalPreProcessor();
+			conditionalPreProcessor.process(root);
 
-//        System.out.println(root.toSource());
+			/* Expand short circuit operators. */
+			ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
+			shortCircuitPreProcessor.process(root);
+        }
+
+        System.out.println(root.toSource());
 
         /* Build the GumTree tree. */
         RhinoTreeVisitor visitor = new RhinoTreeVisitor(root);
@@ -61,22 +64,25 @@ public class RhinoTreeGenerator extends TreeGenerator {
         return visitor.getTree();
 	}
 
-	public Tree generate(String file) {
+	@Override
+	public Tree generate(String file, boolean preProcess) {
 		Parser p = new Parser();
 		try {
 			AstRoot root = p.parse(new FileReader(file), file, 1);
 
-            /* Expand variable initializers. */
-//            VarPreProcessor varPreProcessor = new VarPreProcessor();
-//            varPreProcessor.process(root);
+			if(preProcess) {
+				/* Expand variable initializers. */
+				VarPreProcessor varPreProcessor = new VarPreProcessor();
+				varPreProcessor.process(root);
 
-            /* Expand the ternary operators. */
-//            ConditionalPreProcessor conditionalPreProcessor = new ConditionalPreProcessor();
-//            conditionalPreProcessor.process(root);
+				/* Expand the ternary operators. */
+				ConditionalPreProcessor conditionalPreProcessor = new ConditionalPreProcessor();
+				conditionalPreProcessor.process(root);
 
-            /* Expand short circuit operators. */
-//            ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
-//            shortCircuitPreProcessor.process(root);
+				/* Expand short circuit operators. */
+				ShortCircuitPreProcessor shortCircuitPreProcessor = new ShortCircuitPreProcessor();
+				shortCircuitPreProcessor.process(root);
+			}
 
             System.out.println(root.toSource());
 
@@ -90,9 +96,9 @@ public class RhinoTreeGenerator extends TreeGenerator {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * This provides clients with efficient access to Tree nodes if they have 
+	 * This provides clients with efficient access to Tree nodes if they have
 	 * AstNodes. For example, a client may be  working with AstNodes instead
 	 * of the Tree nodes (AstNodes provide more data and functionality). This
 	 * will allow them to get the GumTree data for each AstNode without having
@@ -112,4 +118,5 @@ public class RhinoTreeGenerator extends TreeGenerator {
 	public String getName() {
 		return "js-rhino";
 	}
+
 }

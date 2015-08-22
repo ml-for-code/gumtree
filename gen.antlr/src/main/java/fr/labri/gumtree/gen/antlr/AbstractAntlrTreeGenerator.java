@@ -18,7 +18,7 @@ import fr.labri.gumtree.io.TreeGenerator;
 import fr.labri.gumtree.tree.Tree;
 
 public abstract class AbstractAntlrTreeGenerator extends TreeGenerator {
-	
+
 	protected Map<CommonTree, Tree> trees;
 
 	protected static Map<Integer, String> names;
@@ -26,15 +26,15 @@ public abstract class AbstractAntlrTreeGenerator extends TreeGenerator {
 	protected static Map<Integer, Integer> chars;
 
 	protected CommonTokenStream tokens;
-	
+
 	public AbstractAntlrTreeGenerator() {
 		loadNames();
 	}
-	
+
 	protected abstract CommonTree getStartSymbol(String file) throws RecognitionException, IOException;
-	
+
 	@Override
-	public Tree generate(String file) throws IOException {
+	public Tree generate(String file, boolean preProcess) throws IOException {
 		try {
 			loadChars(file);
 			CommonTree ct = getStartSymbol(file);
@@ -46,35 +46,35 @@ public abstract class AbstractAntlrTreeGenerator extends TreeGenerator {
 		}
 		return null;
 	}
-	
+
 	protected abstract Parser getEmptyParser();
-	
+
 	protected Tree toTree(CommonTree ct) {
 		Tree t = null;
-		
+
 		if (ct.getText().equals(names.get(ct.getType())))
 			t = new Tree(ct.getType());
 		else
 			t = new Tree(ct.getType(), ct.getText());
-		
+
 		t.setTypeLabel(names.get(ct.getType()));
-		
+
 		int[] pos = getPosAndLength(ct);
 		t.setPos(pos[0]);
 		t.setLength(pos[1]);
-		
+
 		if (ct.getParent() != null )
 			t.setParentAndUpdateChildren(trees.get(ct.getParent()));
-		
-		if (ct.getChildCount() > 0) { 
+
+		if (ct.getChildCount() > 0) {
 			trees.put(ct, t);
 			for (CommonTree cct : (List<CommonTree>) ct.getChildren()) toTree(cct);
 		}
-		
+
 		return t;
 	}
 
-	
+
 	private void loadNames() {
 		names = new HashMap<Integer, String>();
 		Parser p = getEmptyParser();
@@ -84,11 +84,11 @@ public abstract class AbstractAntlrTreeGenerator extends TreeGenerator {
 					names.put(f.getInt(p), f.getName());
 				} catch (Exception e) {
 					e.printStackTrace();
-				} 
+				}
 			}
 		}
 	}
-	
+
 	private void loadChars(String file) throws IOException {
 		chars = new HashMap<Integer, Integer>();
 		BufferedReader r = new BufferedReader(new FileReader(file));
@@ -102,7 +102,7 @@ public abstract class AbstractAntlrTreeGenerator extends TreeGenerator {
 		}
 		r.close();
 	}
-	
+
 	@SuppressWarnings("serial")
 	private int[] getPosAndLength(CommonTree ct) {
 		//if (ct.getTokenStartIndex() == -1 || ct.getTokenStopIndex() == -1) System.out.println("yoooo" + ct.toStringTree());

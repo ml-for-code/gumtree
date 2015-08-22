@@ -10,11 +10,11 @@ import fr.labri.gumtree.io.TreeIoUtils;
 import fr.labri.gumtree.tree.Tree;
 
 public class CTreeGenerator extends TreeGenerator {
-	
+
 	private static final String COCCI_CMD = "cgum";
 
 	@Override
-	public Tree generate(String file) {
+	public Tree generate(String file, boolean preProcess) {
 		File f = new File(file);
 		ProcessBuilder b = new ProcessBuilder(COCCI_CMD, f.getAbsolutePath());
 		b.directory(f.getParentFile());
@@ -47,7 +47,7 @@ public class CTreeGenerator extends TreeGenerator {
 	}
 
 	@Override
-	public Tree generate(String source, String file) {
+	public Tree generate(String source, String file, boolean preProcess) {
 		// TODO Auto-generated method stub
 		return null;
 	}
