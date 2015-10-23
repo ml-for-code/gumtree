@@ -1,17 +1,17 @@
 /*
  * Copyright 2011 Jean-Rémy Falleri
- * 
+ *
  * This file is part of Praxis.
  * Praxis is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
- * Praxis is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *
+ * Praxis is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Praxis.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,13 +20,24 @@ package fr.labri.gumtree.gen.jdt;
 
 import java.util.Stack;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.internal.compiler.ast.BinaryExpression;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.Type;
 
 import fr.labri.gumtree.tree.Tree;
 
 public class JdtVisitor  extends AbstractJdtVisitor {
-	
+
 	private Stack<Tree> trees;
 
 	public JdtVisitor() {
@@ -50,7 +61,7 @@ public class JdtVisitor  extends AbstractJdtVisitor {
 		else if (n instanceof StringLiteral) label = ((StringLiteral) n).getEscapedValue();
 		else if (n instanceof NumberLiteral) label = ((NumberLiteral) n).getToken();
 		else if (n instanceof CharacterLiteral) label = ((CharacterLiteral) n).getEscapedValue();
-		else if (n instanceof BooleanLiteral) label = ((BooleanLiteral) n).toString(); 
+		else if (n instanceof BooleanLiteral) label = ((BooleanLiteral) n).toString();
 		else if (n instanceof InfixExpression) label = ((InfixExpression) n).getOperator().toString();
 		else if (n instanceof PrefixExpression) label = ((PrefixExpression) n).getOperator().toString();
 		else if (n instanceof PostfixExpression) label = ((PostfixExpression) n).getOperator().toString();
@@ -59,6 +70,7 @@ public class JdtVisitor  extends AbstractJdtVisitor {
 		Tree t = new Tree(type, label, n.getClass().getSimpleName());
 		t.setPos(n.getStartPosition());
 		t.setLength(n.getLength());
+		t.setASTNode(n); // qhanam
 
 		if (root == null) root = t;
 		else {
@@ -68,7 +80,7 @@ public class JdtVisitor  extends AbstractJdtVisitor {
 
 		trees.push(t);
 	}
-	
+
 	@Override
 	public boolean visit(QualifiedName name) {
 		return false;

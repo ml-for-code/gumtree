@@ -18,9 +18,6 @@
 
 package fr.labri.gumtree.gen.jdt;
 
-import java.io.IOException;
-
-import fr.labri.gumtree.tree.Tree;
 
 
 public class JdtTreeGenerator extends AbstractJdtTreeGenerator {
@@ -38,18 +35,6 @@ public class JdtTreeGenerator extends AbstractJdtTreeGenerator {
 	@Override
 	protected AbstractJdtVisitor createVisitor() {
 		return new JdtVisitor();
-	}
-
-	@Override
-	public Tree generate(String source, String file, boolean preProcess) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Tree generate(String file, boolean preProcess) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

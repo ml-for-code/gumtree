@@ -56,7 +56,7 @@ public interface ClassifiedASTNode {
     /**
      * @return the type of AST node as a string.
      */
-    String getTypeName();
+    String getASTNodeType();
     
     /**
      * @return the CFG node or edge label (the source code).

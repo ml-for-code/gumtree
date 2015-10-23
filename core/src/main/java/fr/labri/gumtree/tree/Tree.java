@@ -5,19 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.ubc.ece.salt.gumtree.ast.ClassifiedASTNode;
-import ca.ubc.ece.salt.gumtree.ast.ParserASTNode;
 
 public class Tree {
-	
+
 	// Begin constants
 	public static final int NO_ID = Integer.MIN_VALUE;
 	public static final String NO_LABEL = "";
 	public static final int NO_VALUE = -1;
 	private static final String OPEN_SYMBOL = "[(";
 	private static final String CLOSE_SYMBOL = ")]";
-	private static final String SEPARATE_SYMBOL = "@@";	
+	private static final String SEPARATE_SYMBOL = "@@";
 	// End constants
-	
+
 	// Unique id of the node.
 	private int id;
 
@@ -26,12 +25,12 @@ public class Tree {
 
 	// Label of the token
 	private String label;
-	
+
 	// Begin hierarchy of the tree
 	private Tree parent;
 	private List<Tree> children;
 	// End hierarchy of the tree
-	
+
 	// Begin metrics on the tree
 	private int height;
 	private int size;
@@ -43,12 +42,12 @@ public class Tree {
 	private int pos;
 	private int length;
 	// End position
-	
+
 	// Begin position in terms of line and column start and end
 	private int[] lcPosStart;
 	private int[] lcPosEnd;
 	// End position
-	
+
 	// Useless it should be implemented outside
 	//TODO remove the matched attribute
 	private boolean matched;
@@ -56,13 +55,13 @@ public class Tree {
 	// Takes a lot of useless memory, should not be implemented this way.
 	//TODO fix implementation of type label.
 	private String typeLabel;
-	
+
 	// Needed for Rted :(
 	private Object tmpData;
-	
+
 	/* Link back to the concrete ASTNode this was created from. */
-	private ParserASTNode<?> astnode;
-	
+	private ClassifiedASTNode astnode;
+
 	public Tree(int type) {
 		this(type, NO_LABEL);
 	}
@@ -97,7 +96,7 @@ public class Tree {
 	}
 
 	/**
-	 * Indicate whether or not all the descendants of the trees are already mapped. 
+	 * Indicate whether or not all the descendants of the trees are already mapped.
 	 * @return
 	 */
 	public boolean areDescendantsMatched() {
@@ -107,7 +106,7 @@ public class Tree {
 
 	/**
 	 * Make a shallow copy of the tree.
-	 * @return a shallow copy of the tree, including type, id, label, typeLabel, position and length. 
+	 * @return a shallow copy of the tree, including type, id, label, typeLabel, position and length.
 	 */
 	public Tree copy() {
 		Tree t = new Tree(this.getType(), this.getLabel());
@@ -145,7 +144,7 @@ public class Tree {
 	}
 
 	/**
-	 * Returns the position of the given child in the tree. 
+	 * Returns the position of the given child in the tree.
 	 * @param child
 	 * @return the position of the child, or -1 if the given child is not in the children list.
 	 */
@@ -172,7 +171,7 @@ public class Tree {
 	 * @return
 	 */
 	public List<Tree> getDescendants() {
-		List<Tree> trees = TreeUtils.preOrder(this); 
+		List<Tree> trees = TreeUtils.preOrder(this);
 		trees.remove(0);
 		return trees;
 	}
@@ -188,7 +187,7 @@ public class Tree {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -260,7 +259,7 @@ public class Tree {
 	public int getType() {
 		return type;
 	}
-	
+
 	public String getTypeLabel() {
 		return typeLabel;
 	}
@@ -285,7 +284,7 @@ public class Tree {
 	public boolean isClone(Tree tree) {
 		if (this.getDigest() != tree.getDigest()) return false;
 		else {
-			boolean res = (this.toDigestTreeString().equals(tree.toDigestTreeString())); 
+			boolean res = (this.toDigestTreeString().equals(tree.toDigestTreeString()));
 			return res;
 		}
 	}
@@ -309,7 +308,7 @@ public class Tree {
 
 	/**
 	 * Indicate whether or not the tree is mappable to the given tree.
-	 * @param t 
+	 * @param t
 	 * @return true if both trees are not mapped and if the trees have the same type, false either.
 	 */
 	public boolean isMatchable(Tree t) {
@@ -433,7 +432,7 @@ public class Tree {
 				b.append(c.toCompleteTreeString() + " ");
 			b.append(")");
 			return b.toString();
-		}	
+		}
 	}
 
 	public String toDigestString() {
@@ -478,24 +477,23 @@ public class Tree {
 		for (Tree t : TreeUtils.preOrder(this)) b.append(indent(t) + t.toString() + "\n");
 		return b.toString();
 	}
-	
-	/*
-	 * Get and set the ASTNode. - qhanam
+
+	/**
+	 * Set the AST node associated with this Tree node.
+	 * @author Quinn Hanam
+	 * @param node The AST node that this Tree node was build from.
 	 */
-	
-	public void setASTNode(ParserASTNode<?> node) {
+	public void setASTNode(ClassifiedASTNode node) {
 		this.astnode = node;
 	}
-	
+
+	/**
+	 * Get the AST node associated with this Tree node.
+	 * @author Quinn Hanam
+	 * @return node The AST node that this Tree node was build from.
+	 */
 	public ClassifiedASTNode getClassifiedASTNode() throws InvalidClassException {
-		if(this.astnode.getASTNode() instanceof ClassifiedASTNode) {
-			return (ClassifiedASTNode) this.astnode.getASTNode();
-		}
-		throw new InvalidClassException("The AST node does not implement ASTClassifier.");
+		return this.astnode;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T getASTNode() {
-		return ((ParserASTNode<T>) this.astnode).getASTNode();
-	}
+
 }
