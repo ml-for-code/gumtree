@@ -130,8 +130,9 @@ public class ASTClassifier {
 		/* Climb the tree and label all unchanged nodes until we get to the
 		 * statement. */
 		Tree ancestor = node.getParent();
-		while(ancestor.getClassifiedASTNode().getChangeType() == ChangeType.UNCHANGED ||
-			  ancestor.getClassifiedASTNode().getChangeType() == ChangeType.MOVED) {
+		while(ancestor != null && ancestor.getClassifiedASTNode() != null &&
+			  (ancestor.getClassifiedASTNode().getChangeType() == ChangeType.UNCHANGED ||
+			  ancestor.getClassifiedASTNode().getChangeType() == ChangeType.MOVED)) {
 
 			/* Label the ancestor as updated, since one of its descendants was
 			 * inserted, removed or updated. */
