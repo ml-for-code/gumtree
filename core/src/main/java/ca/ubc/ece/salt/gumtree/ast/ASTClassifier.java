@@ -4,11 +4,15 @@ import java.io.InvalidClassException;
 import java.util.Set;
 
 import ca.ubc.ece.salt.gumtree.ast.ClassifiedASTNode.ChangeType;
+import ca.ubc.ece.salt.gumtree.ast.ClassifiedASTNode.Version;
 import fr.labri.gumtree.actions.TreeClassifier;
 import fr.labri.gumtree.matchers.MappingStore;
 import fr.labri.gumtree.tree.Tree;
 
 public class ASTClassifier {
+
+	/** Assigns uniqueIDs to each node. **/
+	private int uniqueID;
 
 	private Tree srcTree;
 	private Tree dstTree;
@@ -18,6 +22,7 @@ public class ASTClassifier {
 
 	public ASTClassifier(Tree srcTree, Tree dstTree, TreeClassifier treeClassifier, MappingStore mappings) {
 
+		this.uniqueID = 0;
 		this.srcTree = srcTree;
 		this.dstTree = dstTree;
 		this.treeClassifier = treeClassifier;
@@ -49,6 +54,14 @@ public class ASTClassifier {
 
 	}
 
+	/**
+	 * @return A unique ID for the node.
+	 */
+	private int getUniqueID() {
+		this.uniqueID++;
+		return this.uniqueID;
+	}
+
 	private void classifyAs(Set<Tree> classifiedTreeNodes, ChangeType changeType) throws InvalidClassException {
 
 		/* Iterate through the changed Tree nodes and classify the
@@ -64,8 +77,8 @@ public class ASTClassifier {
 	 * Recursively classifies the Tree node's AST nodes with the change type
 	 * of their parent. The classification only occurs if the current node's
 	 * class is {@code UNCHANGED}. If a node is updated, inserted or removed,
-	 * we also label that node's {@code UNCHANGED} ancestors as {@code UPDATED}
-	 * up to the statement level.
+	 * we also label that node's {@code UNCHANGED} or {@code MOVED} ancestors
+	 * as {@code UPDATED} up to the statement level.
 	 * @param node The node to classify.
 	 * @param changeType The change type to assign the AST node.
 	 * @throws InvalidClassException
@@ -95,9 +108,11 @@ public class ASTClassifier {
 			labelAncestorsUpdated(node);
 		}
 
-		/* Assign the node mapping if this is an UPDATED or MOVED node. */
 
 		if(changeType == ChangeType.MOVED || changeType == ChangeType.UPDATED || changeType == ChangeType.UNCHANGED) {
+
+			/* Assign the node mapping if this is an UPDATED or MOVED node. */
+
 			if(isSrc) {
 				Tree dst = this.mappings.getDst(node);
 				if(dst != null) classifiedNode.map(dst.getClassifiedASTNode());
@@ -106,7 +121,21 @@ public class ASTClassifier {
 				Tree src = this.mappings.getSrc(node);
 				if(src != null) classifiedNode.map(src.getClassifiedASTNode());
 			}
+
 		}
+
+		/* Assign the node a unique id if it does not yet have one. */
+
+		if(classifiedNode.getID() == null) {
+			Integer id = this.getUniqueID();
+			classifiedNode.setID(id);
+			if(classifiedNode.getMapping() != null)
+				classifiedNode.getMapping().setID(id);
+		}
+
+		/* Assign the node a version label. */
+		if(isSrc) classifiedNode.setVersion(Version.SOURCE);
+		else classifiedNode.setVersion(Version.DESTINATION);
 
 		/* Classify this node's children with the new change type. */
 
