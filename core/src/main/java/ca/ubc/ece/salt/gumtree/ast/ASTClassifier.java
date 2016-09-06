@@ -58,7 +58,7 @@ public class ASTClassifier {
 	 * @return A unique ID for the node.
 	 */
 	private int getUniqueID() {
-		this.uniqueID++;
+		this.uniqueID += 16; // Allow for offsetting the unique ID. Yields 2^28 addresses (270M).
 		return this.uniqueID;
 	}
 
